@@ -2,7 +2,6 @@ node_modules
 .vscode
 dist
 .qodo
-package-lock.json
 
 # Environment variables
 .env
