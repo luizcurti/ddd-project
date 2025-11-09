@@ -35,5 +35,6 @@ export default {
     "/dist/",
     ".spec.ts$",
     ".interface.ts$",
+    "database-config.ts$",
   ],
 };
