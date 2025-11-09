@@ -4,13 +4,13 @@ import Customer from "./customer";
 describe("Customer unit tests", () => {
   it("should throw error when id is empty", () => {
     expect(() => {
-      let customer = new Customer("", "John");
+      new Customer("", "John");
     }).toThrowError("Id is required");
   });
 
   it("should throw error when name is empty", () => {
     expect(() => {
-      let customer = new Customer("123", "");
+      new Customer("123", "");
     }).toThrowError("Name is required");
   });
 
@@ -27,8 +27,8 @@ describe("Customer unit tests", () => {
 
   it("should activate customer", () => {
     const customer = new Customer("1", "Customer 1");
-    const address = new Address("Street 1", 123, "13330-250", "São Paulo");
-    customer.Address = address;
+    const address = new Address("Street 1", 123, "13330-250", "New York");
+    customer.changeAddress(address);
 
     customer.activate();
 
@@ -59,5 +59,13 @@ describe("Customer unit tests", () => {
 
     customer.addRewardPoints(10);
     expect(customer.rewardPoints).toBe(20);
+  });
+
+  it("should throw error when adding negative reward points", () => {
+    const customer = new Customer("1", "Customer 1");
+    
+    expect(() => {
+      customer.addRewardPoints(-10);
+    }).toThrowError("Reward points must be greater than or equal to zero");
   });
 });

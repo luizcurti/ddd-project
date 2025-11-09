@@ -17,6 +17,7 @@ export default class OrderItem {
     this._price = price;
     this._productId = productId;
     this._quantity = quantity;
+    this.validate();
   }
 
   get id(): string {
@@ -37,5 +38,31 @@ export default class OrderItem {
 
   get price(): number {
     return this._price * this._quantity;
+  }
+
+  get unitPrice(): number {
+    return this._price;
+  }
+
+  orderItemTotal(): number {
+    return this._price * this._quantity;
+  }
+
+  private validate(): void {
+    if (this._id.length === 0) {
+      throw new Error("OrderItem id is required");
+    }
+    if (this._name.length === 0) {
+      throw new Error("OrderItem name is required");
+    }
+    if (this._productId.length === 0) {
+      throw new Error("OrderItem productId is required");
+    }
+    if (this._price < 0) {
+      throw new Error("OrderItem price must be greater than or equal to zero");
+    }
+    if (this._quantity <= 0) {
+      throw new Error("OrderItem quantity must be greater than zero");
+    }
   }
 }

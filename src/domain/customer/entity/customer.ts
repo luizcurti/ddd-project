@@ -39,7 +39,7 @@ export default class Customer {
     this.validate();
   }
 
-  get Address(): Address {
+  get address(): Address {
     return this._address;
   }
   
@@ -63,10 +63,9 @@ export default class Customer {
   }
 
   addRewardPoints(points: number) {
+    if (points < 0) {
+      throw new Error("Reward points must be greater than or equal to zero");
+    }
     this._rewardPoints += points;
-  }
-
-  set Address(address: Address) {
-    this._address = address;
   }
 }

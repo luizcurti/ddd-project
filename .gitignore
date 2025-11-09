@@ -3,3 +3,22 @@ node_modules
 dist
 .qodo
 package-lock.json
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Test coverage
+coverage
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Database
+*.db
+*.sqlite

@@ -5,26 +5,34 @@ import CustomerModel from "./customer.model";
 
 export default class CustomerRepository implements CustomerRepositoryInterface {
   async create(entity: Customer): Promise<void> {
+    if (!entity.address) {
+      throw new Error("Customer address is required for persistence");
+    }
+    
     await CustomerModel.create({
       id: entity.id,
       name: entity.name,
-      street: entity.Address.street,
-      number: entity.Address.number,
-      zipcode: entity.Address.zip,
-      city: entity.Address.city,
+      street: entity.address.street,
+      number: entity.address.number,
+      zipcode: entity.address.zip,
+      city: entity.address.city,
       active: entity.isActive(),
       rewardPoints: entity.rewardPoints,
     });
   }
 
   async update(entity: Customer): Promise<void> {
+    if (!entity.address) {
+      throw new Error("Customer address is required for persistence");
+    }
+
     await CustomerModel.update(
       {
         name: entity.name,
-        street: entity.Address.street,
-        number: entity.Address.number,
-        zipcode: entity.Address.zip,
-        city: entity.Address.city,
+        street: entity.address.street,
+        number: entity.address.number,
+        zipcode: entity.address.zip,
+        city: entity.address.city,
         active: entity.isActive(),
         rewardPoints: entity.rewardPoints,
       },
@@ -45,7 +53,7 @@ export default class CustomerRepository implements CustomerRepositoryInterface {
         },
         rejectOnEmpty: true,
       });
-    } catch (error) {
+    } catch {
       throw new Error("Customer not found");
     }
 
@@ -64,7 +72,7 @@ export default class CustomerRepository implements CustomerRepositoryInterface {
     const customerModels = await CustomerModel.findAll();
 
     const customers = customerModels.map((customerModels) => {
-      let customer = new Customer(customerModels.id, customerModels.name);
+      const customer = new Customer(customerModels.id, customerModels.name);
       customer.addRewardPoints(customerModels.rewardPoints);
       const address = new Address(
         customerModels.street,
