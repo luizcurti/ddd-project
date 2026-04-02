@@ -34,6 +34,13 @@ router.post("/", async (req: Request, res: Response) => {
       return res.status(400).json({ error: "items are required" });
     }
 
+    for (const item of items) {
+      if (!item.name) return res.status(400).json({ error: "Each item must have a name" });
+      if (!item.productId) return res.status(400).json({ error: "Each item must have a productId" });
+      if (typeof item.price !== "number") return res.status(400).json({ error: "Each item price must be a number" });
+      if (typeof item.quantity !== "number") return res.status(400).json({ error: "Each item quantity must be a number" });
+    }
+
     const orderItems = items.map(
       (item: { id?: string; name: string; productId: string; price: number; quantity: number }) =>
         new OrderItem(
@@ -88,6 +95,13 @@ router.put("/:id", async (req: Request, res: Response) => {
 
     if (!items || !Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ error: "items are required" });
+    }
+
+    for (const item of items) {
+      if (!item.name) return res.status(400).json({ error: "Each item must have a name" });
+      if (!item.productId) return res.status(400).json({ error: "Each item must have a productId" });
+      if (typeof item.price !== "number") return res.status(400).json({ error: "Each item price must be a number" });
+      if (typeof item.quantity !== "number") return res.status(400).json({ error: "Each item quantity must be a number" });
     }
 
     const repository = new OrderRepository();

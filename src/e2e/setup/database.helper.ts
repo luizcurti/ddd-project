@@ -26,7 +26,7 @@ export async function setupE2EDatabase(): Promise<Sequelize> {
 }
 
 export async function truncateAllTables(): Promise<void> {
-  // Ordem importa por causa das FKs
+  // Order matters due to FK constraints
   await OrderItemModel.destroy({ where: {}, truncate: false });
   await OrderModel.destroy({ where: {}, truncate: false });
   await CustomerModel.destroy({ where: {}, truncate: false });

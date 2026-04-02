@@ -11,7 +11,7 @@ export default {
 
   testTimeout: 30000,
 
-  // Rodar sequencialmente para evitar conflitos no banco
+  // Run sequentially to avoid database conflicts
   maxWorkers: 1,
 
   globalSetup: "./src/e2e/setup/global-setup.ts",

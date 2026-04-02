@@ -12,14 +12,14 @@ export default {
   
   coverageProvider: "v8",
   
-  // Coleta cobertura dos arquivos TypeScript
+  // Collect coverage from TypeScript source files
   collectCoverageFrom: [
     "src/**/*.ts",
     "!src/**/*.spec.ts",
     "!src/**/*.interface.ts",
   ],
   
-  // Limites de cobertura
+  // Coverage thresholds
   coverageThreshold: {
     global: {
       branches: 90,
@@ -29,7 +29,7 @@ export default {
     },
   },
   
-  // Ignora arquivos específicos para cobertura
+  // Paths excluded from coverage collection
   coveragePathIgnorePatterns: [
     "/node_modules/",
     "/dist/",

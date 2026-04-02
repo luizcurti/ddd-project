@@ -26,21 +26,24 @@ export default class OrderRepository implements OrderRepositoryInterface {
   }
 
   async update(entity: Order): Promise<void> {
-    await OrderModel.update(
-      { total: entity.total() },
-      { where: { id: entity.id } }
-    );
-    await OrderItemModel.destroy({ where: { order_id: entity.id } });
-    await OrderItemModel.bulkCreate(
-      entity.items.map((item) => ({
-        id: item.id,
-        name: item.name,
-        price: item.unitPrice,
-        product_id: item.productId,
-        quantity: item.quantity,
-        order_id: entity.id,
-      }))
-    );
+    await OrderModel.sequelize!.transaction(async (t) => {
+      await OrderModel.update(
+        { total: entity.total() },
+        { where: { id: entity.id }, transaction: t }
+      );
+      await OrderItemModel.destroy({ where: { order_id: entity.id }, transaction: t });
+      await OrderItemModel.bulkCreate(
+        entity.items.map((item) => ({
+          id: item.id,
+          name: item.name,
+          price: item.unitPrice,
+          product_id: item.productId,
+          quantity: item.quantity,
+          order_id: entity.id,
+        })),
+        { transaction: t }
+      );
+    });
   }
 
   async find(id: string): Promise<Order> {
@@ -72,10 +75,12 @@ export default class OrderRepository implements OrderRepositoryInterface {
   }
 
   async delete(id: string): Promise<void> {
-    await OrderItemModel.destroy({ where: { order_id: id } });
-    const rows = await OrderModel.destroy({ where: { id } });
-    if (rows === 0) {
-      throw new Error("Order not found");
-    }
+    await OrderModel.sequelize!.transaction(async (t) => {
+      await OrderItemModel.destroy({ where: { order_id: id }, transaction: t });
+      const rows = await OrderModel.destroy({ where: { id }, transaction: t });
+      if (rows === 0) {
+        throw new Error("Order not found");
+      }
+    });
   }
 }

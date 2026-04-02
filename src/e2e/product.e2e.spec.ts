@@ -70,6 +70,15 @@ describe("Product E2E — /products", () => {
       expect(res.status).toBe(400);
       expect(res.body.error).toMatch(/greater than or equal to zero/i);
     });
+
+    it("should return 400 when price is a string", async () => {
+      const res = await request(app)
+        .post("/products")
+        .send({ name: "Invalid", price: "abc" });
+
+      expect(res.status).toBe(400);
+      expect(res.body.error).toMatch(/number/i);
+    });
   });
 
   // ─────────────────────────────────────────────

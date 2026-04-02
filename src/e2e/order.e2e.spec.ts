@@ -125,6 +125,42 @@ describe("Order E2E — /orders", () => {
       expect(res.status).toBe(400);
       expect(res.body.error).toMatch(/greater than or equal to zero/i);
     });
+
+    it("should return 400 when item price is a string", async () => {
+      const res = await request(app)
+        .post("/orders")
+        .send({
+          customerId,
+          items: [{ name: "Item", productId, price: "abc", quantity: 1 }],
+        });
+
+      expect(res.status).toBe(400);
+      expect(res.body.error).toMatch(/number/i);
+    });
+
+    it("should return 400 when item name is missing", async () => {
+      const res = await request(app)
+        .post("/orders")
+        .send({
+          customerId,
+          items: [{ productId, price: 100, quantity: 1 }],
+        });
+
+      expect(res.status).toBe(400);
+      expect(res.body.error).toMatch(/name/i);
+    });
+
+    it("should return 400 when item productId is missing", async () => {
+      const res = await request(app)
+        .post("/orders")
+        .send({
+          customerId,
+          items: [{ name: "Item", price: 100, quantity: 1 }],
+        });
+
+      expect(res.status).toBe(400);
+      expect(res.body.error).toMatch(/productId/i);
+    });
   });
 
   // ─────────────────────────────────────────────

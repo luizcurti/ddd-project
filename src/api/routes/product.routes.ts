@@ -24,6 +24,9 @@ router.post("/", async (req: Request, res: Response) => {
     if (price === undefined || price === null) {
       return res.status(400).json({ error: "Price is required" });
     }
+    if (typeof price !== "number") {
+      return res.status(400).json({ error: "Price must be a number" });
+    }
 
     const product = new Product(uuid(), name, price);
     const repository = new ProductRepository();

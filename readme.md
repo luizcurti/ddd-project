@@ -8,7 +8,7 @@ This project demonstrates a clean architecture following DDD patterns with:
 - **Domain Layer**: Core business logic and entities
 - **Infrastructure Layer**: Database persistence with Sequelize ORM
 - **REST API Layer**: Express HTTP server exposing full CRUD endpoints
-- **Complete Test Coverage**: 88 unit tests + 48 E2E tests (136 total)
+- **Complete Test Coverage**: 88 unit tests + 52 E2E tests (140 total)
 - **Code Quality**: ESLint configuration with TypeScript support
 - **Event-Driven Architecture**: Domain events and handlers
 
@@ -143,8 +143,8 @@ src/
 
 - **Test Framework**: Jest with SWC compiler
 - **Unit Tests**: 88 tests — SQLite in-memory, no Docker required (`npm test`)
-- **E2E Tests**: 48 tests — real PostgreSQL via Docker (`npm run test:e2e`)
-- **Total**: 136 passing tests
+- **E2E Tests**: 52 tests — real PostgreSQL via Docker (`npm run test:e2e`)
+- **Total**: 140 passing tests
 
 ### Running E2E Tests
 
@@ -233,8 +233,8 @@ GET /health  →  { "status": "ok" }
 
 ### Core Technologies
 - **TypeScript**: 5.8.2 - Type-safe JavaScript development
-- **Node.js**: >= 23.x - JavaScript runtime
-- **Express**: 4.x - HTTP server and routing
+- **Node.js**: >= 20.x - JavaScript runtime
+- **Express**: 5.x - HTTP server and routing
 - **Jest**: 29.7.0 - Testing framework
 - **Supertest**: E2E HTTP assertions
 - **Sequelize**: 6.37.7 - ORM for database operations
@@ -278,6 +278,6 @@ GET /health  →  { "status": "ok" }
 - ✅ Reward points system for customers
 - ✅ Event-driven notifications
 - ✅ Full REST API (Express) with CRUD endpoints
-- ✅ 88 unit tests + 48 E2E tests (136 total)
+- ✅ 88 unit tests + 52 E2E tests (140 total)
 - ✅ Type-safe database operations
 - ✅ Clean architecture following SOLID principles

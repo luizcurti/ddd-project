@@ -78,17 +78,17 @@ export default class CustomerRepository implements CustomerRepositoryInterface {
   async findAll(): Promise<Customer[]> {
     const customerModels = await CustomerModel.findAll();
 
-    const customers = customerModels.map((customerModels) => {
-      const customer = new Customer(customerModels.id, customerModels.name);
-      customer.addRewardPoints(customerModels.rewardPoints);
+    const customers = customerModels.map((model) => {
+      const customer = new Customer(model.id, model.name);
+      customer.addRewardPoints(model.rewardPoints);
       const address = new Address(
-        customerModels.street,
-        customerModels.number,
-        customerModels.zipcode,
-        customerModels.city
+        model.street,
+        model.number,
+        model.zipcode,
+        model.city
       );
       customer.changeAddress(address);
-      if (customerModels.active) {
+      if (model.active) {
         customer.activate();
       }
       return customer;
