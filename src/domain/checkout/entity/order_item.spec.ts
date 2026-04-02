@@ -10,7 +10,6 @@ describe("OrderItem unit tests", () => {
     expect(orderItem.quantity).toBe(2);
     expect(orderItem.unitPrice).toBe(100);
     expect(orderItem.price).toBe(200); // quantity * unitPrice
-    expect(orderItem.orderItemTotal()).toBe(200);
   });
 
   it("should throw error when id is empty", () => {

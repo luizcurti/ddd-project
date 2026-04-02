@@ -82,9 +82,7 @@ describe("Customer repository test", () => {
   it("should throw an error when customer is not found", async () => {
     const customerRepository = new CustomerRepository();
 
-    expect(async () => {
-      await customerRepository.find("456ABC");
-    }).rejects.toThrow("Customer not found");
+    await expect(customerRepository.find("456ABC")).rejects.toThrow("Customer not found");
   });
 
   it("should find all customers", async () => {
@@ -129,5 +127,23 @@ describe("Customer repository test", () => {
     customer["_address"] = undefined;
 
     await expect(customerRepository.update(customer)).rejects.toThrow("Customer address is required for persistence");
+  });
+
+  it("should delete a customer", async () => {
+    const customerRepository = new CustomerRepository();
+    const customer = new Customer("123", "Customer 1");
+    const address = new Address("Street 1", 1, "Zipcode 1", "City 1");
+    customer.changeAddress(address);
+    await customerRepository.create(customer);
+
+    await customerRepository.delete("123");
+
+    await expect(customerRepository.find("123")).rejects.toThrow("Customer not found");
+  });
+
+  it("should throw when deleting non-existent customer", async () => {
+    const customerRepository = new CustomerRepository();
+
+    await expect(customerRepository.delete("non-existent")).rejects.toThrow("Customer not found");
   });
 });

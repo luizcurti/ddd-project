@@ -94,5 +94,21 @@ describe("Product repository test", () => {
 
     expect(products).toEqual(foundProducts);    
   });
+
+  it("should delete a product", async () => {
+    const productRepository = new ProductRepository();
+    const product = new Product("1", "Product 1", 100);
+    await productRepository.create(product);
+
+    await productRepository.delete("1");
+
+    await expect(productRepository.find("1")).rejects.toThrow("Product not found");
+  });
+
+  it("should throw when deleting non-existent product", async () => {
+    const productRepository = new ProductRepository();
+
+    await expect(productRepository.delete("non-existent")).rejects.toThrow("Product not found");
+  });
   
 });

@@ -7,7 +7,8 @@ A comprehensive implementation of Domain-Driven Design (DDD) principles using No
 This project demonstrates a clean architecture following DDD patterns with:
 - **Domain Layer**: Core business logic and entities
 - **Infrastructure Layer**: Database persistence with Sequelize ORM
-- **Complete Test Coverage**: 154 tests with 100% coverage
+- **REST API Layer**: Express HTTP server exposing full CRUD endpoints
+- **Complete Test Coverage**: 88 unit tests + 48 E2E tests (136 total)
 - **Code Quality**: ESLint configuration with TypeScript support
 - **Event-Driven Architecture**: Domain events and handlers
 
@@ -56,47 +57,55 @@ npm test  # Tests always use SQLite in memory
 ### Available Commands
 
 ```bash
-npm test                # Run all tests (SQLite in memory)
-npm run test:coverage   # Run tests with coverage report
-npm run lint           # Check code quality
-npm run docker:up      # Start PostgreSQL database (optional)
-npm run docker:down    # Stop all containers (optional)
-npm run db:reset       # Reset database (optional)
+npm test                # Run all unit tests (SQLite in-memory, no Docker needed)
+npm run test:coverage   # Run unit tests with coverage report
+npm run test:e2e        # Run E2E tests against real PostgreSQL (requires Docker)
+npm run dev             # Start the API server in watch mode
+npm run start           # Start the API server
+npm run lint            # Check code quality
+npm run docker:up       # Start PostgreSQL database
+npm run docker:down     # Stop all containers
+npm run db:reset        # Reset database
 ```
 
 ## 🗄️ Database Setup
 
 This project supports multiple database configurations:
 
-- **Testing**: SQLite in memory (automatic, no setup required)
-- **Development**: PostgreSQL via Docker (optional, for development database)
-- **Production**: PostgreSQL (configurable via environment variables)
+- **Unit Tests**: SQLite in-memory (automatic, no setup required)
+- **E2E Tests**: PostgreSQL via Docker (**required** for `npm run test:e2e`)
+- **Development / Production**: PostgreSQL (configurable via environment variables)
 
-### Quick Database Setup (Optional)
-
-If you want to test with PostgreSQL in development:
+### Quick Database Setup
 
 ```bash
-# Start PostgreSQL database
+# Start PostgreSQL (required for E2E tests and local development)
 npm run docker:up
 
-# Stop PostgreSQL database  
+# Stop PostgreSQL
 npm run docker:down
 ```
 
-**Note**: Tests always use SQLite in memory, so Docker is not required for testing.
+**Note**: Unit tests always use SQLite in-memory, so Docker is **not** required for `npm test`.
 
 ## � Prerequisites
 
 * **Node.js** (version >= 20.x)
 * **TypeScript** (version >= 5.8.x)
 * **npm** or **yarn**
-* **Docker & Docker Compose** (optional, for development database only)
+* **Docker & Docker Compose** (required for E2E tests and local development database)
 
 ## 📁 Project Structure
 
 ```
 src/
+├── api/                             # REST API Layer (Express)
+│   ├── app.ts                       # Express app setup
+│   ├── server.ts                    # HTTP server bootstrap
+│   └── routes/                      # Route handlers
+│       ├── customer.routes.ts
+│       ├── product.routes.ts
+│       └── order.routes.ts
 ├── domain/                          # Domain Layer (Business Logic)
 │   ├── @shared/                     # Shared domain components
 │   │   ├── event/                   # Event system
@@ -117,18 +126,102 @@ src/
 │       ├── factory/                 # Order factory
 │       ├── repository/              # Order repository interface
 │       └── service/                 # Order services
-└── infrastructure/                  # Infrastructure Layer
-    ├── customer/                    # Customer persistence
-    ├── product/                     # Product persistence
-    └── order/                       # Order persistence
+├── infrastructure/                  # Infrastructure Layer
+│   ├── customer/                    # Customer persistence
+│   ├── product/                     # Product persistence
+│   └── order/                       # Order persistence
+└── e2e/                             # E2E Tests (real PostgreSQL)
+    ├── setup/
+    │   ├── global-setup.ts          # Jest global setup (waits for PostgreSQL)
+    │   └── database.helper.ts       # DB helpers for E2E tests
+    ├── customer.e2e.spec.ts
+    ├── product.e2e.spec.ts
+    └── order.e2e.spec.ts
 ```
 
 ## 🧪 Testing
 
 - **Test Framework**: Jest with SWC compiler
-- **Coverage**: 100% across all metrics (statements, branches, functions, lines)
-- **Test Types**: Unit tests for all domains and infrastructure
-- **Total Tests**: 154 passing tests
+- **Unit Tests**: 88 tests — SQLite in-memory, no Docker required (`npm test`)
+- **E2E Tests**: 48 tests — real PostgreSQL via Docker (`npm run test:e2e`)
+- **Total**: 136 passing tests
+
+### Running E2E Tests
+
+E2E tests exercise the full HTTP stack (Express → Sequelize → PostgreSQL) using Supertest.
+
+```bash
+# 1. Start the database
+npm run docker:up
+
+# 2. Run E2E tests
+npm run test:e2e
+```
+
+The global setup waits for PostgreSQL to be ready before running any test suite.
+
+## 🌐 REST API
+
+Start the server with `npm run dev` (or `npm start`). Base URL: `http://localhost:3000`.
+
+### Customers
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/customers` | Create a customer |
+| `GET` | `/customers` | List all customers |
+| `GET` | `/customers/:id` | Get a customer by ID |
+| `PUT` | `/customers/:id` | Update name and/or address |
+| `DELETE` | `/customers/:id` | Delete a customer |
+
+**POST /customers body:**
+```json
+{
+  "name": "John Smith",
+  "address": { "street": "Main St", "number": 42, "zip": "10001", "city": "New York" }
+}
+```
+
+### Products
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/products` | Create a product |
+| `GET` | `/products` | List all products |
+| `GET` | `/products/:id` | Get a product by ID |
+| `PUT` | `/products/:id` | Update name and/or price |
+| `DELETE` | `/products/:id` | Delete a product |
+
+**POST /products body:**
+```json
+{ "name": "Laptop", "price": 1200 }
+```
+
+### Orders
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/orders` | Create an order |
+| `GET` | `/orders` | List all orders |
+| `GET` | `/orders/:id` | Get an order by ID |
+| `PUT` | `/orders/:id` | Replace order items |
+| `DELETE` | `/orders/:id` | Delete an order |
+
+**POST /orders body:**
+```json
+{
+  "customerId": "<uuid>",
+  "items": [
+    { "name": "Item 1", "productId": "<uuid>", "price": 100, "quantity": 2 }
+  ]
+}
+```
+
+### Health Check
+
+```
+GET /health  →  { "status": "ok" }
+```
 
 ## 🔧 Code Quality
 
@@ -141,7 +234,9 @@ src/
 ### Core Technologies
 - **TypeScript**: 5.8.2 - Type-safe JavaScript development
 - **Node.js**: >= 23.x - JavaScript runtime
-- **Jest**: 29.7.0 - Testing framework with 100% coverage
+- **Express**: 4.x - HTTP server and routing
+- **Jest**: 29.7.0 - Testing framework
+- **Supertest**: E2E HTTP assertions
 - **Sequelize**: 6.37.7 - ORM for database operations
 - **ESLint**: 8.57.1 - Code quality and linting
 
@@ -179,9 +274,10 @@ src/
 
 - ✅ Complete customer management with addresses
 - ✅ Product catalog with pricing and variants
-- ✅ Order processing with items and calculations
+- ✅ Order processing with items and total calculations
 - ✅ Reward points system for customers
 - ✅ Event-driven notifications
-- ✅ Full test coverage with comprehensive scenarios
+- ✅ Full REST API (Express) with CRUD endpoints
+- ✅ 88 unit tests + 48 E2E tests (136 total)
 - ✅ Type-safe database operations
 - ✅ Clean architecture following SOLID principles

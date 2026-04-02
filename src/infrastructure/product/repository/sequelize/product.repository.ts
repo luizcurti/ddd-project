@@ -12,7 +12,7 @@ export default class ProductRepository implements ProductRepositoryInterface {
   }
 
   async update(entity: Product): Promise<void> {
-    await ProductModel.update(
+    const [rowsUpdated] = await ProductModel.update(
       {
         name: entity.name,
         price: entity.price,
@@ -23,10 +23,16 @@ export default class ProductRepository implements ProductRepositoryInterface {
         },
       }
     );
+    if (rowsUpdated === 0) {
+      throw new Error("Product not found");
+    }
   }
 
   async find(id: string): Promise<Product> {
     const productModel = await ProductModel.findOne({ where: { id } });
+    if (!productModel) {
+      throw new Error("Product not found");
+    }
     return new Product(productModel.id, productModel.name, productModel.price);
   }
 
@@ -35,5 +41,12 @@ export default class ProductRepository implements ProductRepositoryInterface {
     return productModels.map((productModel) =>
       new Product(productModel.id, productModel.name, productModel.price)
     );
+  }
+
+  async delete(id: string): Promise<void> {
+    const rows = await ProductModel.destroy({ where: { id } });
+    if (rows === 0) {
+      throw new Error("Product not found");
+    }
   }
 }

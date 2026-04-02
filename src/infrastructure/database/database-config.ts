@@ -1,8 +1,8 @@
 import { Sequelize } from "sequelize-typescript";
 import CustomerModel from "../customer/repository/sequelize/customer.model";
 import ProductModel from "../product/repository/sequelize/product.model";
-import OrderModel from "../order/repository/sequilize/order.model";
-import OrderItemModel from "../order/repository/sequilize/order-item.model";
+import OrderModel from "../order/repository/sequelize/order.model";
+import OrderItemModel from "../order/repository/sequelize/order-item.model";
 
 export class DatabaseConfig {
   private static instance: DatabaseConfig;
@@ -41,10 +41,6 @@ export class DatabaseConfig {
         password: process.env.DB_PASSWORD || "postgres",
         logging: process.env.NODE_ENV === 'development' ? console.log : false, // eslint-disable-line no-console
         sync: { force: false },
-        define: {
-          timestamps: true,
-          underscored: true,
-        },
       });
     }
 
@@ -67,7 +63,7 @@ export class DatabaseConfig {
       console.log('✅ Database connection established successfully.'); // eslint-disable-line no-console
       
       if (process.env.NODE_ENV !== 'test') {
-        await this.sequelize.sync({ alter: true });
+        await this.sequelize.sync();
         console.log('✅ Database synchronized successfully.'); // eslint-disable-line no-console
       }
     } catch (error) {

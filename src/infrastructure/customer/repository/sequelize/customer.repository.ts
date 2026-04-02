@@ -26,7 +26,7 @@ export default class CustomerRepository implements CustomerRepositoryInterface {
       throw new Error("Customer address is required for persistence");
     }
 
-    await CustomerModel.update(
+    const [rowsUpdated] = await CustomerModel.update(
       {
         name: entity.name,
         street: entity.address.street,
@@ -42,6 +42,9 @@ export default class CustomerRepository implements CustomerRepositoryInterface {
         },
       }
     );
+    if (rowsUpdated === 0) {
+      throw new Error("Customer not found");
+    }
   }
 
   async find(id: string): Promise<Customer> {
@@ -58,6 +61,7 @@ export default class CustomerRepository implements CustomerRepositoryInterface {
     }
 
     const customer = new Customer(id, customerModel.name);
+    customer.addRewardPoints(customerModel.rewardPoints);
     const address = new Address(
       customerModel.street,
       customerModel.number,
@@ -65,6 +69,9 @@ export default class CustomerRepository implements CustomerRepositoryInterface {
       customerModel.city
     );
     customer.changeAddress(address);
+    if (customerModel.active) {
+      customer.activate();
+    }
     return customer;
   }
 
@@ -88,5 +95,12 @@ export default class CustomerRepository implements CustomerRepositoryInterface {
     });
 
     return customers;
+  }
+
+  async delete(id: string): Promise<void> {
+    const rows = await CustomerModel.destroy({ where: { id } });
+    if (rows === 0) {
+      throw new Error("Customer not found");
+    }
   }
 }
