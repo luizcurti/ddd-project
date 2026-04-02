@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "ddd-project-collection",
     "name": "DDD Project API",
-    "description": "CRUD completo para Customers, Products e Orders",
+    "description": "Full CRUD for Customers, Products and Orders",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -581,7 +581,7 @@
     },
     {
       "name": "Orders",
-      "description": "Pré-requisito: executar POST /customers e POST /products antes de criar orders. Os IDs são salvos em variáveis de coleção automaticamente pelos testes.",
+      "description": "Prerequisite: run POST /customers and POST /products before creating orders. IDs are automatically saved in collection variables by the test scripts.",
       "item": [
         {
           "name": "POST /orders — create single item",

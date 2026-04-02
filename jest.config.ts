@@ -7,16 +7,21 @@ export default {
   transform: {
     "^.+\.(t|j)sx?$": ["@swc/jest"],
   },
-  
+
   clearMocks: true,
-  
+
   coverageProvider: "v8",
-  
+
+  // Exclude E2E tests — they require a live PostgreSQL and use jest.e2e.config.ts
+  testPathIgnorePatterns: ["/node_modules/", "/src/e2e/"],
+
   // Collect coverage from TypeScript source files
   collectCoverageFrom: [
     "src/**/*.ts",
     "!src/**/*.spec.ts",
     "!src/**/*.interface.ts",
+    "!src/e2e/**",
+    "!src/api/**",          // API layer is covered by E2E tests (jest.e2e.config.ts)
   ],
   
   // Coverage thresholds
